@@ -10,9 +10,6 @@ import '../entities/transaction.dart';
 class TransactionFactory {
   TransactionFactory._();
 
-  // ============================================================
-  // 🎯 LIVE CODE — Write this part during the session
-  // ============================================================
   static Transaction create(TransactionType type, double amount) {
     switch (type) {
       case TransactionType.deposit:

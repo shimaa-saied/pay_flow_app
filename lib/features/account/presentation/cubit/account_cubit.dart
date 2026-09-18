@@ -19,9 +19,6 @@ class AccountCubit extends Cubit<AccountState> {
   AccountCubit(this._transactionRepository, this._getAccountUseCase)
       : super(const AccountState());
 
-  // ============================================================
-  // 🎯 LIVE CODE — Write this part during the session
-  // ============================================================
   void loadAccount() {
     emit(state.copyWith(status: AccountStatus.loading));
 
@@ -43,9 +40,6 @@ class AccountCubit extends Cubit<AccountState> {
     );
   }
 
-  // ============================================================
-  // 🎯 LIVE CODE — Write this part during the session
-  // ============================================================
   Future<void> deposit(double amount) async {
     if (amount <= 0) {
       emit(state.copyWith(
@@ -59,9 +53,6 @@ class AccountCubit extends Cubit<AccountState> {
     );
   }
 
-  // ============================================================
-  // 🎯 LIVE CODE — Write this part during the session
-  // ============================================================
   Future<void> withdraw(double amount) async {
     if (amount <= 0) {
       emit(state.copyWith(

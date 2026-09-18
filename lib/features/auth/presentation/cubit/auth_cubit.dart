@@ -16,9 +16,6 @@ class AuthCubit extends Cubit<AuthState> {
       : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
         super(AuthInitial());
 
-  // ============================================================
-  // 🎯 LIVE CODE — Write this part during the session
-  // ============================================================
   Future<void> login({required String email, required String password}) async {
     if (email.trim().isEmpty || password.trim().isEmpty) {
       emit(const AuthError('من فضلك اكتب الإيميل والباسورد.'));

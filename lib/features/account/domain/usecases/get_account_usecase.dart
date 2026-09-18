@@ -12,9 +12,6 @@ class GetAccountUseCase {
 
   const GetAccountUseCase(this.repository);
 
-  // ============================================================
-  // 🎯 LIVE CODE — Write this part during the session
-  // ============================================================
   Stream<List<Transaction>> call() {
     return repository.watchTransactions();
   }

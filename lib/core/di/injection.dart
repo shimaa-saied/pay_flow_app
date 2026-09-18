@@ -48,8 +48,6 @@ void setupCoreDependencies() {
 }
 
 /// يتنادى مرة واحدة بس بعد نجاح تسجيل الدخول.
-/// لو اتنادى تاني بالغلط لنفس اليوزر، بنعمل unregister الأول
-/// عشان منسجّلش نسخة مكررة من نفس الـ dependency (Singleton صح).
 void setupUserDependencies(String userId) {
   if (sl.isRegistered<TransactionRemoteDataSource>()) {
     sl.unregister<TransactionRemoteDataSource>();
@@ -64,10 +62,6 @@ void setupUserDependencies(String userId) {
       userId: userId,
     ),
   );
-
-  // ============================================================
-  // 🎯 LIVE CODE — Write this part during the session
-  // ============================================================
   sl.registerLazySingleton<TransactionRepository>(
     () => TransactionRepositoryImpl(sl()),
   );

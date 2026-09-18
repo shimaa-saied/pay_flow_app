@@ -16,16 +16,10 @@ class TransactionRemoteDataSource {
   CollectionReference<Map<String, dynamic>> get _collection =>
       firestore.collection('users').doc(userId).collection('transactions');
 
-  // ============================================================
-  // 🎯 LIVE CODE — Write this part during the session
-  // ============================================================
   Future<void> addTransaction(TransactionModel transaction) async {
     await _collection.add(transaction.toFirestore());
   }
 
-  // ============================================================
-  // 🎯 LIVE CODE — Write this part during the session
-  // ============================================================
   Stream<List<TransactionModel>> watchTransactions() {
     return _collection.orderBy('date', descending: true).snapshots().map(
           (snapshot) => snapshot.docs

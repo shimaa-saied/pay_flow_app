@@ -14,9 +14,6 @@ class TransactionRepositoryImpl implements TransactionRepository {
 
   TransactionRepositoryImpl(this._dataSource);
 
-  // ============================================================
-  // 🎯 LIVE CODE — Write this part during the session
-  // ============================================================
   @override
   Future<void> addTransaction(Transaction transaction) {
     return _dataSource.addTransaction(
@@ -28,9 +25,6 @@ class TransactionRepositoryImpl implements TransactionRepository {
     );
   }
 
-  // ============================================================
-  // 🎯 LIVE CODE — Write this part during the session
-  // ============================================================
   @override
   Stream<List<Transaction>> watchTransactions() {
     return _dataSource.watchTransactions();
