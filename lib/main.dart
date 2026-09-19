@@ -15,7 +15,7 @@ import 'features/auth/presentation/cubit/auth_cubit.dart';
 import 'features/auth/presentation/pages/login_page.dart';
 import 'features/exchange_rate/presentation/cubit/exchange_rate_cubit.dart';
 import 'features/account/presentation/cubit/account_cubit.dart';
-import 'features/account/presentation/pages/card_page.dart';
+import 'features/shell/presentation/pages/main_shell.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -71,7 +71,7 @@ class _RootRouter extends StatelessWidget {
     di.setupUserDependencies(currentUser.uid);
     return BlocProvider(
       create: (_) => di.sl<AccountCubit>(),
-      child: const CardPage(),
+      child: const MainShell(),
     );
   }
 }

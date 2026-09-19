@@ -1,9 +1,8 @@
 // features/auth/presentation/pages/login_page.dart
 //
-// مثال حي لـ BlocConsumer:
-//   - builder: يبني الزرار كـ loading indicator وقت AuthLoading.
-//   - listener: بينفّذ side effect (Navigation أو SnackBar) مرة واحدة
-//     بس لكل state جديد، من غير ما يعيد بناء الـ UI بتاعه.
+// Example of BlocConsumer:
+//   - builder: shows a loading indicator when AuthLoading is active.
+//   - listener: handles side effects (navigation, SnackBar) once per state change.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,7 +11,7 @@ import 'package:pay_flow_app/core/di/injection.dart' as di;
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import 'package:pay_flow_app/features/account/presentation/cubit/account_cubit.dart';
-import 'package:pay_flow_app/features/account/presentation/pages/card_page.dart';
+import 'package:pay_flow_app/features/shell/presentation/pages/main_shell.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -47,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
                     MaterialPageRoute(
                       builder: (_) => BlocProvider(
                         create: (_) => di.sl<AccountCubit>(),
-                        child: const CardPage(),
+                        child: const MainShell(),
                       ),
                     ),
                   );
@@ -62,40 +61,59 @@ class _LoginPageState extends State<LoginPage> {
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text('PayFlow',
-                        style: TextStyle(
-                            fontSize: 32, fontWeight: FontWeight.bold)),
+                    const Text(
+                      'PayFlow',
+                      style: TextStyle(
+                          fontSize: 32, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Sign in to your account',
+                      style: TextStyle(color: Colors.grey),
+                    ),
                     const SizedBox(height: 32),
                     TextField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      decoration:
-                          const InputDecoration(labelText: 'البريد الإلكتروني'),
+                      decoration: const InputDecoration(
+                        labelText: 'Email',
+                        prefixIcon: Icon(Icons.email_outlined),
+                        border: OutlineInputBorder(),
+                      ),
                     ),
                     const SizedBox(height: 16),
                     TextField(
                       controller: _passwordController,
                       obscureText: true,
-                      decoration: const InputDecoration(labelText: 'كلمة المرور'),
+                      decoration: const InputDecoration(
+                        labelText: 'Password',
+                        prefixIcon: Icon(Icons.lock_outline),
+                        border: OutlineInputBorder(),
+                      ),
                     ),
                     const SizedBox(height: 24),
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
+                      child: FilledButton(
                         onPressed: isLoading
                             ? null
                             : () => context.read<AuthCubit>().login(
                                   email: _emailController.text,
                                   password: _passwordController.text,
                                 ),
+                        style: FilledButton.styleFrom(
+                          padding:
+                              const EdgeInsets.symmetric(vertical: 16),
+                        ),
                         child: isLoading
                             ? const SizedBox(
                                 height: 20,
                                 width: 20,
                                 child: CircularProgressIndicator(
-                                    strokeWidth: 2, color: Colors.white),
+                                    strokeWidth: 2,
+                                    color: Colors.white),
                               )
-                            : const Text('تسجيل الدخول'),
+                            : const Text('Sign In'),
                       ),
                     ),
                   ],

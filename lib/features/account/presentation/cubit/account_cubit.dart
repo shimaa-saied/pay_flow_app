@@ -44,7 +44,7 @@ class AccountCubit extends Cubit<AccountState> {
     if (amount <= 0) {
       emit(state.copyWith(
         status: AccountStatus.error,
-        errorMessage: 'أدخل مبلغًا أكبر من صفر.',
+        errorMessage: 'Please enter an amount greater than zero.',
       ));
       return;
     }
@@ -57,14 +57,14 @@ class AccountCubit extends Cubit<AccountState> {
     if (amount <= 0) {
       emit(state.copyWith(
         status: AccountStatus.error,
-        errorMessage: 'أدخل مبلغًا أكبر من صفر.',
+        errorMessage: 'Please enter an amount greater than zero.',
       ));
       return;
     }
     if (amount > state.balance) {
       emit(state.copyWith(
         status: AccountStatus.error,
-        errorMessage: 'رصيدك غير كافٍ لإتمام هذه العملية.',
+        errorMessage: 'Insufficient balance for this transaction.',
       ));
       return;
     }

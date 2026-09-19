@@ -18,7 +18,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> login({required String email, required String password}) async {
     if (email.trim().isEmpty || password.trim().isEmpty) {
-      emit(const AuthError('من فضلك اكتب الإيميل والباسورد.'));
+      emit(const AuthError('Please enter your email and password.'));
       return;
     }
 
@@ -32,7 +32,7 @@ class AuthCubit extends Cubit<AuthState> {
 
       final uid = credential.user?.uid;
       if (uid == null) {
-        emit(const AuthError('تعذر الحصول على بيانات المستخدم.'));
+        emit(const AuthError('Failed to retrieve user data.'));
         return;
       }
 
@@ -42,7 +42,7 @@ class AuthCubit extends Cubit<AuthState> {
     } on FirebaseAuthException catch (e) {
       emit(AuthError(_mapFirebaseError(e)));
     } catch (e) {
-      emit(AuthError('حصل خطأ غير متوقع: $e'));
+      emit(AuthError('An unexpected error occurred: $e'));
     }
   }
 
@@ -55,15 +55,15 @@ class AuthCubit extends Cubit<AuthState> {
   String _mapFirebaseError(FirebaseAuthException e) {
     switch (e.code) {
       case 'user-not-found':
-        return 'مفيش حساب بالإيميل ده.';
+        return 'No account found with this email.';
       case 'wrong-password':
-        return 'الباسورد غلط.';
+        return 'Incorrect password.';
       case 'invalid-email':
-        return 'صيغة الإيميل غير صحيحة.';
+        return 'Invalid email format.';
       case 'network-request-failed':
-        return 'مفيش اتصال بالإنترنت.';
+        return 'No internet connection.';
       default:
-        return e.message ?? 'فشل تسجيل الدخول.';
+        return e.message ?? 'Sign in failed.';
     }
   }
 }
