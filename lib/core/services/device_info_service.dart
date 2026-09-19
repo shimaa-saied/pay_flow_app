@@ -1,50 +1,28 @@
-// core/services/device_info_service.dart
-//
-// Singleton Pattern:
-// عايزين instance واحدة بس من الخدمة دي طول عمر التطبيق، عشان مفيش داعي
-// نعمل query لمعلومات الجهاز أكتر من مرة. الـ constructor خاص (private)،
-// والوصول الوحيد بيكون عبر DeviceInfoService.instance.
-
-import 'dart:io' show Platform;
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart';
 
 class DeviceInfoService {
-  DeviceInfoService._internal();
+  DeviceInfoService._();
+  static final DeviceInfoService instance = DeviceInfoService._();
 
-  static final DeviceInfoService instance = DeviceInfoService._internal();
+  ({String model, String osVersion})? _cached;
 
-  final DeviceInfoPlugin _plugin = DeviceInfoPlugin();
-
-  String? _cachedModel;
-  String? _cachedOsVersion;
-
-  /// بيرجع (اسم الموديل، نسخة نظام التشغيل).
-  /// النتيجة بتتخزن بعد أول نداء (cache) عشان منعملش الاستعلام غير مرة واحدة.
   Future<({String model, String osVersion})> getDeviceInfo() async {
-    if (_cachedModel != null && _cachedOsVersion != null) {
-      return (model: _cachedModel!, osVersion: _cachedOsVersion!);
-    }
-
+    if (_cached != null) return _cached!;
     try {
-      if (Platform.isAndroid) {
-        final info = await _plugin.androidInfo;
-        _cachedModel = info.model;
-        _cachedOsVersion = 'Android ${info.version.release}';
-      } else if (Platform.isIOS) {
-        final info = await _plugin.iosInfo;
-        _cachedModel = info.utsname.machine;
-        _cachedOsVersion = 'iOS ${info.systemVersion}';
+      final plugin = DeviceInfoPlugin();
+      if (defaultTargetPlatform == TargetPlatform.android) {
+        final info = await plugin.androidInfo;
+        _cached = (model: info.model, osVersion: 'Android ${info.version.release}');
+      } else if (defaultTargetPlatform == TargetPlatform.iOS) {
+        final info = await plugin.iosInfo;
+        _cached = (model: info.utsname.machine, osVersion: info.systemVersion);
       } else {
-        _cachedModel = 'Unknown device';
-        _cachedOsVersion = Platform.operatingSystem;
+        _cached = (model: 'Unknown', osVersion: 'Unknown');
       }
     } catch (_) {
-      // ملحوظة معمارية: أي فشل هنا (منصة غير مدعومة، إلخ) مش لازم يوقع
-      // الشاشة كلها — بنرجّع قيمة افتراضية بدل ما نرمي Exception.
-      _cachedModel = 'غير معروف';
-      _cachedOsVersion = 'غير معروف';
+      _cached = (model: 'Unknown', osVersion: 'Unknown');
     }
-
-    return (model: _cachedModel!, osVersion: _cachedOsVersion!);
+    return _cached!;
   }
 }

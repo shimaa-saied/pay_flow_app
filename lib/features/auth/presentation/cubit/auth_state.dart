@@ -1,38 +1,14 @@
-// features/auth/presentation/cubit/auth_state.dart
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:equatable/equatable.dart';
+part 'auth_state.freezed.dart';
 
-// ملحوظة على Equatable: لو نسينا نعمل extend للـ Equatable هنا،
-// BlocBuilder/BlocConsumer ممكن يعمل rebuild زيادة عن اللزوم (لأن كل
-// instance جديد بيتحسب "مختلف" حتى لو نفس القيم)، أو العكس ميعملش
-// rebuild لما لازم. بنستخدمها هنا عشان نقارن بالـ props مش بالـ reference.
-
-abstract class AuthState extends Equatable {
-  const AuthState();
-
-  @override
-  List<Object?> get props => [];
-}
-
-class AuthInitial extends AuthState {}
-
-class AuthLoading extends AuthState {}
-
-class AuthSuccess extends AuthState {
-  final String userId;
-  final String email;
-
-  const AuthSuccess({required this.userId, required this.email});
-
-  @override
-  List<Object?> get props => [userId, email];
-}
-
-class AuthError extends AuthState {
-  final String message;
-
-  const AuthError(this.message);
-
-  @override
-  List<Object?> get props => [message];
+@freezed
+class AuthState with _$AuthState {
+  const factory AuthState.initial() = _AuthInitial;
+  const factory AuthState.loading() = _AuthLoading;
+  const factory AuthState.authenticated({
+    required String userId,
+    required String email,
+  }) = Authenticated;
+  const factory AuthState.unauthenticated({String? errorMessage}) = Unauthenticated;
 }

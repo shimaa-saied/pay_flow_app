@@ -1,28 +1,35 @@
-// features/auth/presentation/cubit/auth_cubit.dart
-//
-// Auth بسيط: الـ Cubit بينادي FirebaseAuth مباشرة من غير Repository/UseCase.
-// مش كل feature محتاج كل الطبقات.
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:pay_flow_app/core/di/injection.dart' as di;
+import '../../../../core/services/user_session.dart';
 import 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   final FirebaseAuth _firebaseAuth;
+  final UserSession _userSession;
 
-  AuthCubit({FirebaseAuth? firebaseAuth})
-      : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-        super(AuthInitial());
+  AuthCubit(this._firebaseAuth, this._userSession)
+      : super(_resolveInitialState(_userSession));
+
+  static AuthState _resolveInitialState(UserSession session) {
+    if (session.isAuthenticated) {
+      return AuthState.authenticated(
+        userId: session.userId!,
+        email: session.email ?? '',
+      );
+    }
+    return const AuthState.initial();
+  }
 
   Future<void> login({required String email, required String password}) async {
     if (email.trim().isEmpty || password.trim().isEmpty) {
-      emit(const AuthError('Please enter your email and password.'));
+      emit(const AuthState.unauthenticated(
+        errorMessage: 'Please enter your email and password.',
+      ));
       return;
     }
 
-    emit(AuthLoading());
+    emit(const AuthState.loading());
 
     try {
       final credential = await _firebaseAuth.signInWithEmailAndPassword(
@@ -31,25 +38,30 @@ class AuthCubit extends Cubit<AuthState> {
       );
 
       final uid = credential.user?.uid;
+      final userEmail = credential.user?.email ?? email;
+
       if (uid == null) {
-        emit(const AuthError('Failed to retrieve user data.'));
+        emit(const AuthState.unauthenticated(
+          errorMessage: 'Failed to retrieve user data.',
+        ));
         return;
       }
 
-      di.setupUserDependencies(uid);
-
-      emit(AuthSuccess(userId: uid, email: credential.user?.email ?? email));
+      _userSession.login(uid, userEmail);
+      emit(AuthState.authenticated(userId: uid, email: userEmail));
     } on FirebaseAuthException catch (e) {
-      emit(AuthError(_mapFirebaseError(e)));
+      emit(AuthState.unauthenticated(errorMessage: _mapFirebaseError(e)));
     } catch (e) {
-      emit(AuthError('An unexpected error occurred: $e'));
+      emit(const AuthState.unauthenticated(
+        errorMessage: 'An unexpected error occurred.',
+      ));
     }
   }
 
   Future<void> logout() async {
     await _firebaseAuth.signOut();
-    di.clearUserDependencies();
-    emit(AuthInitial());
+    _userSession.logout();
+    emit(const AuthState.initial());
   }
 
   String _mapFirebaseError(FirebaseAuthException e) {
