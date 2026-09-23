@@ -1,15 +1,14 @@
 import 'package:dio/dio.dart';
 
+import '../../../../../../core/api/api_services.dart';
 import '../../../../../../core/errors/failures.dart';
 import '../../models/exchange_rate_model.dart';
 import 'exchange_rate_remote_datasource.dart';
 
 class ExchangeRateRemoteDataSourceImpl implements ExchangeRateRemoteDataSource {
-  final Dio _dio;
+  final ApiServices _apiServices;
 
-  ExchangeRateRemoteDataSourceImpl(this._dio);
-
-  static const _baseUrl = 'https://api.frankfurter.app';
+  ExchangeRateRemoteDataSourceImpl(this._apiServices);
 
   @override
   Future<ExchangeRateModel> getRate({
@@ -17,14 +16,8 @@ class ExchangeRateRemoteDataSourceImpl implements ExchangeRateRemoteDataSource {
     required String target,
   }) async {
     try {
-      final response = await _dio.get(
-        '$_baseUrl/latest',
-        queryParameters: {'from': base, 'to': target},
-      );
-      return ExchangeRateModel.fromJson(
-        response.data as Map<String, dynamic>,
-        target,
-      );
+      final data = await _apiServices.getLatestRate(base, target);
+      return ExchangeRateModel.fromJson(data, target);
     } on DioException catch (e) {
       if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.receiveTimeout) {

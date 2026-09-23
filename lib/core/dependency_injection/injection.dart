@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 
+import '../api/api_services.dart';
 import '../api/dio_factory.dart';
 import '../router/app_router.dart';
 import '../services/device_info_service.dart';
@@ -24,6 +25,7 @@ final GetIt getIt = GetIt.instance;
 Future<void> setupGetIt() async {
   // ── Infrastructure ───────────────────────────────────────────────────────
   getIt.registerLazySingleton(() => DioFactory.create());
+  getIt.registerLazySingleton(() => ApiServices(getIt()));
   getIt.registerLazySingleton(() => FirebaseAuth.instance);
   getIt.registerLazySingleton(() => FirebaseFirestore.instance);
   getIt.registerLazySingleton(() => DeviceInfoService.instance);
@@ -57,7 +59,7 @@ Future<void> setupGetIt() async {
 
   // ── Exchange Rate ─────────────────────────────────────────────────────────
   getIt.registerLazySingleton(
-    () => ExchangeRateRemoteDataSourceImpl(getIt()),
+    () => ExchangeRateRemoteDataSourceImpl(getIt<ApiServices>()),
   );
   getIt.registerLazySingleton<ExchangeRateRepository>(
     () => ExchangeRateRepositoryImpl(getIt<ExchangeRateRemoteDataSourceImpl>()),
