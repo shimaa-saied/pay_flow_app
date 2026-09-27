@@ -266,6 +266,13 @@ The exchange rate is fetched from the Frankfurter REST API.
 
 ---
 
+
+
+## To run code generation:                                                                                                                                      
+- dart run build_runner build --delete-conflicting-outputs
+
+
+
 ## Study Priority Order
 
 If you are starting from scratch, learn in this sequence:
