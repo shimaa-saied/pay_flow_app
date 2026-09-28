@@ -35,12 +35,12 @@ class _MainLayoutState extends State<MainLayout> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<AccountCubit, AccountState>(
-      listenWhen: (previous, current) {
-        if (current is! AccountLoaded) return false;
+      listenWhen: (previous, current) {     //  listenWhen = WHEN should I listen?
+      if (current is! AccountLoaded) return false;
         final prev = previous is AccountLoaded ? previous.errorMessage : null;
         return current.errorMessage != null && current.errorMessage != prev;
       },
-      listener: (context, state) {
+      listener: (context, state) {     //listener = WHAT should I do when I listen?
         final msg =
             state.maybeWhen(loaded: (_, __, ___, e) => e, orElse: () => null);
         if (msg != null) {

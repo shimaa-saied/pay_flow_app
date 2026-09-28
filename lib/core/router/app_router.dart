@@ -39,8 +39,8 @@ class AppRouter {
         routes: [
           GoRoute(
             path: 'history',
-            builder: (context, _) => BlocProvider.value(
-              value: BlocProvider.of<AccountCubit>(context),
+            builder: (_, __) => BlocProvider(
+              create: (_) => getIt<AccountCubit>()..loadAccount(),
               child: const HistoryScreen(),
             ),
           ),
